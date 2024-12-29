@@ -16,9 +16,9 @@ app.use(express.json())
 // Configure body-parser to handle URL-encoded form data
 app.use(bodyParser.urlencoded({ extended: true})); // Set extended: true for nest objects
 
-app.get('/books', (req, res)) => {
+app.get('/books', (req, res) => {
     res.json(books); // Send the array of books as JSON responses
-}
+})
 
 app.post('/books', (req, res) => {
 const newBook = req.body; // Get the new book data from the request body
