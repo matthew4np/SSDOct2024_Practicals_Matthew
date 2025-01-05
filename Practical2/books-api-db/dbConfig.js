@@ -1,5 +1,5 @@
 module.exports = {
-    user: "username", // Replace with your SQL Server login username
+    user: "matthew", // Replace with your SQL Server login username
     password: "password", // Replace with your SQL Server login password
     server: "localhost",
     database: "bed_db",

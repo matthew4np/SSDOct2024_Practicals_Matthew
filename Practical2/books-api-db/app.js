@@ -1,9 +1,25 @@
 const express = require("express");
-const sql = require("mssql"); // Assuming you've installed mssql
+const booksController = require("./controllers/booksController");
+const sql = require("mssql");
 const dbConfig = require("./dbConfig");
+const bodyParser = require("body-parser"); // Import body-parser
+const validateBook = require("./middlewares/validateBook");
+
 
 const app = express();
 const port = process.env.PORT || 3000; // Use environment variable or default port
+
+// Include body-parser middleware to handle JSON data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
+
+
+// Routes for GET requests (replace with appropriate routes for update and delete later)
+app.get("/books", booksController.getAllBooks);
+app.get("/books/:id", booksController.getBookById);
+app.post("/books", validateBook, booksController.createBook); // POST for creating books (can handle JSON data)
+app.put("/books/:id", validateBook, booksController.updateBook);
+app.delete("/books/:id", booksController.deleteBook); // DELETE for deleting books
 
 app.listen(port, async () => {
   try {
