@@ -1,39 +1,19 @@
 const jwt = require("jsonwebtoken");
+const Joi = require("joi");
 
-function verifyJWT(req, res, next) {
-  const token =
-    req.headers.authorization && req.headers.authorization.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  jwt.verify(token, "your_secret_key", (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ message: "Forbidden" });
+const validateUser = (req, res, next) => {
+    const schema = Joi.object({
+      username: Joi.string().min(3).max(50).required(),
+      role: Joi.string().min(3).max(50).required(),
+    });
+  
+    const validation = schema.validate(req.body, { abortEarly: false }); // Validate request body
+  
+    if (validation.error) {
+      const errors = validation.error.details.map((error) => error.message);
+      res.status(400).json({ message: "Validation error", errors });
+      return; // Terminate middleware execution on validation error
     }
-
-    // Check user role for authorization (replace with your logic)
-    const authorizedRoles = {
-      "/books": ["member", "librarian"], // Anyone can view books
-      "/books/[0-9]+/availability": ["librarian"], // Only librarians can update availability
-    };
-
-    const requestedEndpoint = req.url;
-    const userRole = decoded.role;
-
-    const authorizedRole = Object.entries(authorizedRoles).find(
-      ([endpoint, roles]) => {
-        const regex = new RegExp(`^${endpoint}$`); // Create RegExp from endpoint
-        return regex.test(requestedEndpoint) && roles.includes(userRole);
-      }
-    );
-
-    if (!authorizedRole) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
-
-    req.user = decoded; // Attach decoded user information to the request object
-    next();
-  });
-}
+  
+    next(); // If validation passes, proceed to the next route handler
+  };

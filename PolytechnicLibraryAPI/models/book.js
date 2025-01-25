@@ -3,7 +3,7 @@ const dbConfig = require("../dbConfig");
 
 class Book {
   constructor(book_id, title, author, availability) {
-    this.id = id;
+    this.book_id = book_id;
     this.title = title;
     this.author = author;
     this.availability = availability
@@ -20,7 +20,7 @@ class Book {
     connection.close();
 
     return result.recordset.map(
-      (row) => new Book(row.bookid, row.title, row.author, availability)
+      (row) => new Book(row.book_id, row.title, row.author, row.availability)
     ); // Convert rows to Book objects
   }
 

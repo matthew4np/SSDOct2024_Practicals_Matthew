@@ -48,23 +48,32 @@ CREATE TABLE Users (
   user_id INT PRIMARY KEY IDENTITY,
   username VARCHAR(255) NOT NULL UNIQUE,
   passwordHash VARCHAR(255),
-  role VARCHAR(20) CHECK (role='member' or role='library')
+  role VARCHAR(20) CHECK (role='member' or role='librarian')
 );
 
 -- Insert sample users
-INSERT INTO Users (username)
-VALUES
-  ('user1'),
-  ('user2'),
-  ('user3');
+-- INSERT INTO Users (username)
+-- VALUES
+--   ('user1'),
+--   ('user2'),
+--   ('user3');
 
 -- Insert relationships between users and books
-INSERT INTO UserBooks (user_id, book_id)
-VALUES
-  (1, 1),  -- User 1 has book 1
-  (1, 2),  -- User 1 has book 2
-  (1, 4),  -- User 1 has book 4
-  (2, 3),  -- User 2 has book 3
-  (2, 2),  -- User 2 has book 5
-  (3, 1),  -- User 3 has book 1
-  (3, 3);  -- User 3 has book 6
+-- INSERT INTO UserBooks (user_id, book_id)
+-- VALUES
+--   (1, 1),  -- User 1 has book 1
+--   (1, 2),  -- User 1 has book 2
+--   (1, 4),  -- User 1 has book 4
+--   (2, 3),  -- User 2 has book 3
+--   (2, 2),  -- User 2 has book 5
+--   (3, 1),  -- User 3 has book 1
+--   (3, 3);  -- User 3 has book 6
+
+-- sp_who2
+
+-- kill 55
+
+SELECT *
+FROM Users
+
+INSERT INTO Users (username, passwordHash, role) VALUES ('username3', '!@#123qweasd', 'Librarian')

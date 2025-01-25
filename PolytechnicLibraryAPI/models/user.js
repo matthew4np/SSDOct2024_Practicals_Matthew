@@ -24,44 +24,26 @@ constructor(user_id, username, passwordHash, role) {
     ); // Convert rows to User objects
   }
 
-
-  static async getUserById(id) {
-    const connection = await sql.connect(dbConfig);
-
-    const sqlQuery = `SELECT * FROM Users WHERE id = @id`; // Parameterized query
-
-    const request = connection.request();
-    request.input("id", id);
-    const result = await request.query(sqlQuery);
-
-    connection.close();
-
-    return result.recordset[0]
-      ? new User(
-          result.recordset[0].user_id,
-          result.recordset[0].username,
-          result.recordset[0].passwordHash,
-          result.recordset[0].role
-        )
-      : null; // Handle user not found
-  }
-
   static async createUser(newUserData) {
+    console.log(`${JSON.stringify(newUserData)} at createUser user Model`)
+    console.log(`${newUserData.username} at createUser user Model`)
+
     const connection = await sql.connect(dbConfig);
 
-    const sqlQuery = `INSERT INTO Users (username, passwordHash, role) VALUES (@username, @passwordHash, @role); SELECT SCOPE_IDENTITY() AS id;`; // Retrieve ID of inserted record
+    const sqlQuery = `INSERT INTO Users (username, passwordHash, role) VALUES (@username, @hashedPassword, @role); SELECT SCOPE_IDENTITY() AS user_id;`; // Retrieve ID of inserted record
 
     const request = connection.request();
     request.input("username", newUserData.username);
-    request.input("passwordHash", newBookData.passwordHash);
-    request.input("role", newBookData.role);
+    request.input("hashedPassword", newUserData.hashedPassword);
+    request.input("role", newUserData.role);
 
     const result = await request.query(sqlQuery);
 
     connection.close();
 
-    // Retrieve the newly created book using its ID
-    return this.getUserById(result.recordset[0].user_id);
+    // Retrieve the newly created user using its user_id
+    console.log(result.recordset[0].user_id - 1);
+    return this.getUserById(result.recordset[0].user_id - 1);
   }
 
   static async updateUser(id, newUserData) {
@@ -85,7 +67,7 @@ constructor(user_id, username, passwordHash, role) {
   static async deleteUser(id) {
     const connection = await sql.connect(dbConfig);
 
-    const sqlQuery = `DELETE FROM Users WHERE id = @id`; // Parameterized query
+    const sqlQuery = `DELETE FROM Users WHERE user_id = @id`; // Parameterized query
 
     const request = connection.request();
     request.input("id", id);
@@ -156,7 +138,48 @@ constructor(user_id, username, passwordHash, role) {
       await connection.close();
     }
   }
-}
 
+  static async getUserByUsername(username) {
+    const connection = await sql.connect(dbConfig);
+
+    const sqlQuery = `SELECT * FROM Users WHERE username = @username`; // Parameterized query
+
+    const request = connection.request();
+    request.input("username", username);
+    const result = await request.query(sqlQuery);
+
+    connection.close();
+
+    return result.recordset[0]
+      ? new User(
+          result.recordset[0].user_id,
+          result.recordset[0].username,
+          result.recordset[0].passwordHash,
+          result.recordset[0].role
+        )
+      : null; // Handle user not found
+  }
+
+  static async getUserById(id) {
+    const connection = await sql.connect(dbConfig);
+
+    const sqlQuery = `SELECT * FROM Users WHERE user_id = @id`; // Parameterized query
+
+    const request = connection.request();
+    request.input("id", id);
+    const result = await request.query(sqlQuery);
+
+    connection.close();
+
+    return result.recordset[0]
+      ? new User(
+          result.recordset[0].user_id,
+          result.recordset[0].username,
+          result.recordset[0].passwordHash,
+          result.recordset[0].role
+        )
+      : null; // Handle user not found
+  }
+}
 
 module.exports = User;
